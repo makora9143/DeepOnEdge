@@ -11,9 +11,8 @@ num_epochs = 5
 batch_size = 100
 learning_rate = 0.001
 
-n_classes = 2
-train_dataset = dsets.ImageFolder(root='~/../d-hacks/data/compartment_line/torch_dataset/train', transform=transforms.ToTensor())
-test_dataset = dsets.ImageFolder(root='~/../d-hacks/data/compartment_line/torch_dataset/train', transform=transforms.ToTensor())
+train_dataset = dsets.ImageFolder(root='../../d-hacks/data/compartment_line/torch_dataset/train', transform=transforms.ToTensor())
+test_dataset = dsets.ImageFolder(root='../../d-hacks/data/compartment_line/torch_dataset/train', transform=transforms.ToTensor())
 
 # Data Loader (Input Pipeline)
 train_loader = torch.utils.data.DataLoader(dataset=train_dataset,
