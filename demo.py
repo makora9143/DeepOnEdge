@@ -52,7 +52,7 @@ def start_cam(cap):
 
 def main():
     cv2.namedWindow('cam', cv2.WINDOW_NORMAL)
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1)
 
     try:
         start_cam(cap)
