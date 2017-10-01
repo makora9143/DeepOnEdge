@@ -11,7 +11,7 @@ def start_cam(cap):
     ckpt = torch.load('cnn.pkl')
 
     cnn.load_state_dict(ckpt['model'])
-    classes = ckpt['classes']
+    classes = ["0". "1", "2"]
 
     cnn.cuda()
     cnn.eval()

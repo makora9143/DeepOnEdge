@@ -4,6 +4,8 @@ import torchvision.datasets as dsets
 import torchvision.transforms as transforms
 from torch.autograd import Variable
 import numpy as np
+from torch.utils.data import Dataset, DataLoader
+from PIL import Image
 
 from model import CNN, DoE
 
@@ -11,34 +13,35 @@ class LineDataset(Dataset):
     def __init__(self, npz_file, transform):
         dataset = np.load(npz_file)
         self.images = dataset['data'] # matrix of flattened images
-        self.labels = dataset['labels']
+        self.labels = dataset['label'].astype(np.long)
         self.transform = transform
 
     def __len__(self):
         return len(self.images)
 
     def __getitem__(self, idx):
-        image = self.images[idx].reshape(224, 224)
+        image = self.images[idx].reshape((224, 224))
+        image = Image.fromarray(image.astype(np.uint8))
         image = self.transform(image)
 
         return image, self.labels[idx]
 
 # Hyper Parameters
 num_epochs = 5
-batch_size = 100
+batch_size = 64
 learning_rate = 0.001
 
-preprocess = transforms.Compose([transforms.ToPILImage(), transforms.ToTensor()])
+preprocess = transforms.Compose([transforms.ToTensor()])
 
 train_dataset = LineDataset(npz_file='/home/makora/src/drgn_project/SPWID/spwid_train.npz', transform=preprocess)
 test_dataset = LineDataset(npz_file='/home/makora/src/drgn_project/SPWID/spwid_test.npz', transform=preprocess)
 
 # Data Loader (Input Pipeline)
-train_loader = torch.utils.data.DataLoader(dataset=train_dataset,
+train_loader = DataLoader(dataset=train_dataset,
                                            batch_size=batch_size, 
                                            shuffle=True)
 
-test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
+test_loader = DataLoader(dataset=test_dataset,
                                           batch_size=batch_size, 
                                           shuffle=False)
         
@@ -81,5 +84,5 @@ print('Test Accuracy of the model on the 10000 test images: %d %%' % (100 * corr
 
 # Save the Trained Model
 
-ckpt = {'model': cnn.state_dict(), 'classes': train_dataset.classes}
+ckpt = {'model': cnn.state_dict()}
 torch.save(ckpt, 'cnn.pkl')
