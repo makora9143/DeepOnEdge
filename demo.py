@@ -15,7 +15,7 @@ def start_cam(cap):
     ckpt = torch.load('cnn.pkl')
 
     cnn.load_state_dict(ckpt['model'])
-    classes = ["damage", "no line", "no damage"]
+    classes = ["no damage", "no line", "damage"]
     colors = [(0, 0, 255), (255, 255, 255), (0, 255, 0)]
 
     cnn.cuda()
