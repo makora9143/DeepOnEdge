@@ -27,14 +27,15 @@ class LineDataset(Dataset):
         return image, self.labels[idx]
 
 # Hyper Parameters
-num_epochs = 5
-batch_size = 64
+num_epochs = 10
+batch_size = 128
 learning_rate = 0.001
 
-preprocess = transforms.Compose([transforms.ToTensor()])
+preprocess_train = transforms.Compose([transforms.RandomHorizontalFlip(), transforms.ToTensor()])
+preprocess_test = transforms.Compose([transforms.ToTensor()])
 
-train_dataset = LineDataset(npz_file='/home/makora/src/drgn_project/SPWID/spwid_train.npz', transform=preprocess)
-test_dataset = LineDataset(npz_file='/home/makora/src/drgn_project/SPWID/spwid_test.npz', transform=preprocess)
+train_dataset = LineDataset(npz_file='/home/makora/src/drgn_project/SPWID/spwid_train.npz', transform=preprocess_train)
+test_dataset = LineDataset(npz_file='/home/makora/src/drgn_project/SPWID/spwid_test.npz', transform=preprocess_test)
 
 # Data Loader (Input Pipeline)
 train_loader = DataLoader(dataset=train_dataset,
