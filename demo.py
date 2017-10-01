@@ -16,7 +16,7 @@ def start_cam(cap):
 
     cnn.load_state_dict(ckpt['model'])
     classes = ["no damage", "damage", "no line"]
-    colors = [(0, 0, 255), (255, 255, 255), (0, 255, 0)]
+    colors = [(0, 255, 0), (0, 0, 255), (255, 255, 255)]
 
     cnn.cuda()
     cnn.eval()
