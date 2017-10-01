@@ -1,13 +1,13 @@
 import cv2
 import torch
-from model import CNN
+from model import CNN, DoE
 import torchvision.transforms as transforms
 from torch.autograd import Variable
 import numpy as np
 import torch.nn.functional as F
 
 def start_cam(cap):
-    cnn = CNN()
+    cnn = DoE()
     ckpt = torch.load('cnn.pkl')
 
     cnn.load_state_dict(ckpt['model'])

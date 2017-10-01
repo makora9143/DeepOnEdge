@@ -3,16 +3,35 @@ import torch.nn as nn
 import torchvision.datasets as dsets
 import torchvision.transforms as transforms
 from torch.autograd import Variable
+import numpy as np
 
-from model import CNN
+from model import CNN, DoE
+
+class LineDataset(Dataset):
+    def __init__(self, npz_file, transform):
+        dataset = np.load(npz_file)
+        self.images = dataset['data'] # matrix of flattened images
+        self.labels = dataset['labels']
+        self.transform = transform
+
+    def __len__(self):
+        return len(self.images)
+
+    def __getitem__(self, idx):
+        image = self.images[idx].reshape(224, 224)
+        image = self.transform(image)
+
+        return image, self.labels[idx]
 
 # Hyper Parameters
 num_epochs = 5
 batch_size = 100
 learning_rate = 0.001
 
-train_dataset = dsets.ImageFolder(root='../../d-hacks/data/compartment_line/torch_dataset/train', transform=transforms.ToTensor())
-test_dataset = dsets.ImageFolder(root='../../d-hacks/data/compartment_line/torch_dataset/train', transform=transforms.ToTensor())
+preprocess = transforms.Compose([transforms.ToPILImage(), transforms.ToTensor()])
+
+train_dataset = LineDataset(npz_file='/home/makora/src/drgn_project/SPWID/spwid_train.npz', transform=preprocess)
+test_dataset = LineDataset(npz_file='/home/makora/src/drgn_project/SPWID/spwid_test.npz', transform=preprocess)
 
 # Data Loader (Input Pipeline)
 train_loader = torch.utils.data.DataLoader(dataset=train_dataset,
@@ -23,7 +42,7 @@ test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
                                           batch_size=batch_size, 
                                           shuffle=False)
         
-cnn = CNN()
+cnn = DoE()
 cnn.cuda()
 
 # Loss and Optimizer
