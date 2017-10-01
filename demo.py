@@ -5,19 +5,22 @@ import torchvision.transforms as transforms
 from torch.autograd import Variable
 import numpy as np
 import torch.nn.functional as F
+from PIL import Image
+
+def rgb2gray(rgb):
+    return np.dot(rgb[...,:3], [0.299, 0.587, 0.114])
 
 def start_cam(cap):
     cnn = DoE()
     ckpt = torch.load('cnn.pkl')
 
     cnn.load_state_dict(ckpt['model'])
-    classes = ["0". "1", "2"]
+    classes = ["0", "1", "2"]
 
     cnn.cuda()
     cnn.eval()
 
     transform = transforms.Compose([
-        transforms.ToPILImage(),
         transforms.Scale((224, 224)),
         transforms.ToTensor(),
     ])
@@ -26,11 +29,13 @@ def start_cam(cap):
         ret, frame = cap.read()
 
         if ret:
-            img = transform(frame)
+            frame = rgb2gray(frame).astype(np.uint8)
+            frame_pil = Image.fromarray(frame)
+            img = transform(frame_pil)
             pred = cnn(Variable(img.unsqueeze(0)).cuda())
             cv2.imshow('frame', frame)
 
-            pred_prob = F.softmax(pred).data.cpu().numpy()[0]
+            pred_prob = F.softmax(pred).data.cpu().numpy()
             pred = np.argmax(pred_prob)
             print("{}: {}".format(classes[pred], pred_prob[pred]))
 
