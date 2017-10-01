@@ -29,8 +29,8 @@ def start_cam(cap):
         ret, frame = cap.read()
 
         if ret:
-            frame = rgb2gray(frame).astype(np.uint8)
-            frame_pil = Image.fromarray(frame)
+            frame_gray = rgb2gray(frame).astype(np.uint8)
+            frame_pil = Image.fromarray(frame_gray)
             img = transform(frame_pil)
             pred = cnn(Variable(img.unsqueeze(0)).cuda())
             cv2.imshow('frame', frame)
