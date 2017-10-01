@@ -16,6 +16,7 @@ def start_cam(cap):
 
     cnn.load_state_dict(ckpt['model'])
     classes = ["damage", "no line", "no damage"]
+    colors = [(0, 0, 255), (255, 255, 255), (0, 255, 0)]
 
     cnn.cuda()
     cnn.eval()
@@ -33,11 +34,15 @@ def start_cam(cap):
             frame_pil = Image.fromarray(frame_gray)
             img = transform(frame_pil)
             pred = cnn(Variable(img.unsqueeze(0)).cuda())
-            cv2.imshow('frame', frame)
 
             pred_prob = F.softmax(pred).data.cpu().numpy()
             pred = np.argmax(pred_prob)
-            print("{}: {}".format(classes[pred], pred_prob[pred]))
+            text = "{}: {}%".format(classes[pred], int(pred_prob[pred]*100.0))
+            #print("{}: {}".format(classes[pred], pred_prob[pred]))
+
+            cv2.putText(frame, text, (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 2, colors[pred], 2)
+
+            cv2.imshow('cam', frame)
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
@@ -46,6 +51,7 @@ def start_cam(cap):
         print("camera is not opened")
 
 def main():
+    cv2.namedWindow('cam', cv2.WINDOW_NORMAL)
     cap = cv2.VideoCapture(0)
 
     try:
