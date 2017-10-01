@@ -61,4 +61,6 @@ for images, labels in test_loader:
 print('Test Accuracy of the model on the 10000 test images: %d %%' % (100 * correct / total))
 
 # Save the Trained Model
-torch.save(cnn.state_dict(), 'cnn.pkl')
+
+ckpt = {'model': cnn.state_dict(), 'classes': train_dataset.classes}
+torch.save(ckpt, 'cnn.pkl')
