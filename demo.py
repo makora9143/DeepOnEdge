@@ -29,7 +29,7 @@ def start_cam(cap):
 
 
     transform = transforms.Compose([
-        transforms.Scale((224, 224)),
+        transforms.Resize((224, 224)),
         transforms.ToTensor(),
     ])
 
@@ -40,9 +40,9 @@ def start_cam(cap):
             frame_gray = rgb2gray(frame).astype(np.uint8)
             frame_pil = Image.fromarray(frame_gray)
             img = transform(frame_pil)
-            pred = cnn(Variable(img.unsqueeze(0)).cuda())
+            pred = cnn(Variable(img.unsqueeze(0)))#.cuda())
 
-            pred_prob = F.softmax(pred).data.cpu().numpy()
+            pred_prob = F.softmax(pred, -1).data.cpu().numpy()
             pred = np.argmax(pred_prob)
             text = "{}: {}%".format(classes[pred], int(pred_prob[pred]*100.0))
             #print("{}: {}".format(classes[pred], pred_prob[pred]))
@@ -59,7 +59,7 @@ def start_cam(cap):
 
 def main():
     cv2.namedWindow('cam', cv2.WINDOW_NORMAL)
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(0)
 
     try:
         start_cam(cap)
