@@ -12,14 +12,21 @@ def rgb2gray(rgb):
 
 def start_cam(cap):
     cnn = DoE()
-    ckpt = torch.load('cnn.pkl')
+    #############
+    # if use cuda
+    #############
+    # ckpt = torch.load('cnn.pkl')
+    # cnn.load_state_dict(ckpt['model'])
+    # cnn.cuda()
 
-    cnn.load_state_dict(ckpt['model'])
+    ckpt = torch.load('doe.pth.tar')
+    cnn.load_state_dict(ckpt['state_dict'])
+
+    cnn.eval()
+
     classes = ["no damage", "damage", "no line"]
     colors = [(0, 255, 0), (0, 0, 255), (255, 255, 255)]
 
-    cnn.cuda()
-    cnn.eval()
 
     transform = transforms.Compose([
         transforms.Scale((224, 224)),
